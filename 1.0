@@ -1,0 +1,101 @@
+#include <stdio.h>
+#include <string.h>
+
+#define MAX 10
+
+struct Produto {
+    int codigo;
+    char nome[50];
+    float preco;
+};
+
+struct Produto produtos[MAX];
+int code = 0;
+
+void opcoes(int escolha);
+void cadastro();
+void buscar();
+
+int main() {
+    int escolha;
+
+    do {
+        printf("\n======= MENU =======\n");
+        printf("1 - Cadastrar Produto\n");
+        printf("2 - Buscar Produto\n");
+        printf("3 - Sair do Sistema\n");
+        printf("Escolha uma opcao: ");
+
+        scanf("%d", &escolha);
+        opcoes(escolha);
+
+    } while (escolha != 3);
+
+    return 0;
+}
+
+void opcoes(int escolha) {
+
+    switch (escolha) {
+
+        case 1:
+            cadastro();
+            break;
+
+        case 2:
+            buscar();
+            break;
+
+        case 3:
+            printf("Saindo do sistema...\n");
+            break;
+
+        default:
+            printf("Opcao invalida!\n");
+    }
+}
+
+void cadastro() {
+
+    if (code == MAX) {
+        printf("Limite de produtos atingido!\n");
+        return;
+    }
+
+    produtos[code].codigo = code + 1;
+
+    printf("Nome do produto: ");
+    scanf(" %[^\n]", produtos[code].nome);
+
+    printf("Preco do produto: ");
+    scanf("%f", &produtos[code].preco);
+
+    printf("Produto cadastrado com sucesso! Codigo: %d\n", produtos[code].codigo);
+
+    code++;
+}
+
+void buscar() {
+    int codigo;
+    int encontrado = 0;
+
+    printf("Digite o codigo do produto: ");
+    scanf("%d", &codigo);
+
+    for (int i = 0; i < code; i++) {
+        if (produtos[i].codigo == codigo) {
+
+            printf("\nProduto encontrado!\n");
+            printf("Codigo: %d\n", produtos[i].codigo);
+            printf("Nome: %s\n", produtos[i].nome);
+            printf("Preco: %.2f\n", produtos[i].preco);
+
+            encontrado = 1;
+            break;
+        }
+    }
+
+    if (!encontrado) {
+        printf("Produto nao encontrado!\n");
+    }
+}
