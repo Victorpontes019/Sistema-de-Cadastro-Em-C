@@ -1,0 +1,304 @@
+#include <stdio.h>
+#include <locale.h>
+#include <string.h>
+
+void caso_seja(int a);
+void cadastrar();
+void buscar();
+void adicionar_nota();
+void editar();
+void exibir();
+int code = 1;
+int i = 0;
+int alunos = 0;
+int ano_atual = 2026;
+
+struct data {
+    int dia;
+    int mes;
+    int ano;
+};
+
+struct aluno {
+    char nome[50];
+    int id;
+    struct data nascimento;
+    char sexo;
+    int ano_letivo;
+    float notas[3];
+};
+
+#define MAX 50
+struct aluno vetor_alunos[MAX];
+
+int main() {
+
+    setlocale(LC_ALL, "");
+    int escolha;
+    do {
+        printf("\n======MENU======\n");
+        printf("1 - Cadastrar Aluno\n");
+        printf("2 - Buscar Aluno\n");
+        printf("3 - Adicionar Notas\n");
+        printf("4 - Editar Dados\n");
+        printf("5 - Exibir Alunos\n");
+        printf("6 - Sair\n");
+        printf("Digite: ");
+        scanf("%d", &escolha);
+
+        caso_seja(escolha);
+    } while (escolha != 6);
+
+    return 0;
+}
+
+void caso_seja(int a) {
+
+    switch (a) {
+        case 1:
+            cadastrar();
+        break;
+
+        case 2:
+            buscar();
+        break;
+        
+        case 3:
+            adicionar_nota();
+        break;
+        
+        case 4:
+            editar();
+        break;
+            
+        case 5:
+        	exibir();
+        break;
+        
+        case 6:
+            printf("\nSaindo...");
+        break;
+        
+        default:
+            printf("\nOpção Invalida! Tente Novamente\n");
+        break;
+    }
+}
+
+void cadastrar() {
+
+    int quantidade_alunos = 0;
+    int inicio = i;
+
+    printf("\nBem vindo ao cadastro de Alunos!\n");
+    printf("Digite o numero de alunos que deseja Cadastrar\n");
+    do {
+        printf("Atenção. Limite Permitido: 10 Alunos Por Vez!\n");
+        printf("Digite: ");
+        scanf("%d", &quantidade_alunos);
+
+        if (quantidade_alunos > 10 || quantidade_alunos <= 0) {
+            printf("\nOpção Inválida! Tente Novamente.\n");
+            quantidade_alunos = 0;
+        }
+    } while (quantidade_alunos == 0);
+
+    int limite = inicio + quantidade_alunos;
+
+    do {
+
+        int n = i - inicio;
+
+        printf("\nDigite o nome do %d° Aluno: ", n + 1);
+        getchar();
+        fgets(vetor_alunos[i].nome, 50, stdin);
+
+        do {
+            int dia, mes, ano;
+            int data_valida = 1;
+
+            vetor_alunos[i].nascimento.ano = 0;
+            printf("Digite a Data de Nascimento do Aluno (DD MM AAAA): ");
+            scanf("%d %d %d", &dia, &mes, &ano);
+
+            if (ano < 1900 || ano > ano_atual) {
+                printf("Ano inválido!\n");
+                data_valida = 0;
+            }
+            if (mes < 1 || mes > 12) {
+                printf("Mês inválido!\n");
+                data_valida = 0;
+            }
+            if (dia < 1 || dia > 31) {
+                printf("Dia inválido!\n");
+                data_valida = 0;
+            }
+
+            if (data_valida) {
+                vetor_alunos[i].nascimento.dia = dia;
+                vetor_alunos[i].nascimento.mes = mes;
+                vetor_alunos[i].nascimento.ano = ano;
+            }
+
+        } while (vetor_alunos[i].nascimento.ano == 0);
+
+        printf("Digite o Sexo do Aluno: (M/F) ");
+        scanf(" %c", &vetor_alunos[i].sexo);
+
+        printf("Digite o Ano Letivo do Aluno: ");
+        scanf("%d", &vetor_alunos[i].ano_letivo);
+
+        vetor_alunos[i].id = code++;
+        i++;
+
+    } while (i < limite);
+
+    printf("\n\nCadastro Feito com Sucesso!");
+    printf("\n=====Situação do Aluno=====\n");
+
+    for (int j = inicio; j < limite; j++) {
+        printf("\nNumero de Matricula do Aluno: %d\n", vetor_alunos[j].id);
+        printf("Nome do Aluno: %s", vetor_alunos[j].nome);
+        printf("Data de Nascimento: %02d/%02d/%04d\n", vetor_alunos[j].nascimento.dia, vetor_alunos[j].nascimento.mes, vetor_alunos[j].nascimento.ano);
+        printf("Sexo: %c\n", vetor_alunos[j].sexo);
+        printf("Ano Letivo do Aluno: %d\n\n", vetor_alunos[j].ano_letivo);
+    }
+    
+    alunos += quantidade_alunos;
+}
+
+void buscar() {
+
+    int escolha_de_busca = 0, id_aluno;
+    char nome_aluno[50];
+
+    do {
+        printf("\nDeseja Digitar Nome ou A matricula do Aluno?\n");
+        printf("1 - Nome.\n");
+        printf("2 - Código.\n");
+        printf("Digite: ");
+        scanf("%d", &escolha_de_busca);
+
+        if (escolha_de_busca > 2 || escolha_de_busca < 1) {
+            printf("\nOpção Invalida! Tente Novamente.\n");
+            escolha_de_busca = 0;
+        }
+    } while (escolha_de_busca == 0);
+
+    if (escolha_de_busca == 1) {
+
+        printf("\nDigite o Nome do Aluno: ");
+        getchar();
+        fgets(nome_aluno, 50, stdin);
+
+        for (int i = 0; i < MAX; i++) {
+            if (strcmp(nome_aluno, vetor_alunos[i].nome) == 0) {
+                printf("\nAluno Encontrado!");
+                printf("\nId do Aluno: %d\n", vetor_alunos[i].id);
+                printf("Nome do Aluno: %s", vetor_alunos[i].nome);
+                printf("Data de Nascimento: %02d/%02d/%04d\n", vetor_alunos[i].nascimento.dia, vetor_alunos[i].nascimento.mes, vetor_alunos[i].nascimento.ano);
+                printf("Sexo: %c\n", vetor_alunos[i].sexo);
+                printf("Ano Letivo do Aluno: %d\n\n", vetor_alunos[i].ano_letivo);
+            }
+        }
+
+    } else if (escolha_de_busca == 2) {
+
+        printf("\nDigite o Numero de Mátricula do Aluno: ");
+        scanf("%d", &id_aluno);
+
+        for (int i = 0; i < MAX; i++) {
+            if (id_aluno == vetor_alunos[i].id) {
+                printf("\nAluno Encontrado!");
+                printf("\nId do Aluno: %d\n", vetor_alunos[i].id);
+                printf("Nome do Aluno: %s", vetor_alunos[i].nome);
+                printf("Data de Nascimento: %02d/%02d/%04d\n", vetor_alunos[i].nascimento.dia, vetor_alunos[i].nascimento.mes, vetor_alunos[i].nascimento.ano);
+                printf("Sexo: %c\n", vetor_alunos[i].sexo);
+                printf("Ano Letivo do Aluno: %d\n\n", vetor_alunos[i].ano_letivo);
+            }
+        }
+    }
+}
+
+void adicionar_nota(){
+
+    int escolha_de_busca = 0, id_aluno, notas = 0;
+    char nome_aluno[50];
+
+    do {
+        printf("\nDeseja Digitar Nome ou A matricula do Aluno?\n");
+        printf("1 - Nome.\n");
+        printf("2 - Código.\n");
+        printf("Digite: ");
+        scanf("%d", &escolha_de_busca);
+
+        if (escolha_de_busca > 2 || escolha_de_busca < 1) {
+            printf("\nOpção Invalida! Tente Novamente.\n");
+            escolha_de_busca = 0;
+        }
+    } while (escolha_de_busca == 0);
+
+    if (escolha_de_busca == 1) {
+
+        printf("\nDigite o Nome do Aluno: ");
+        getchar();
+        fgets(nome_aluno, 50, stdin);
+
+        for (int i = 0; i < MAX; i++) {
+            if (strcmp(nome_aluno, vetor_alunos[i].nome) == 0) {
+                printf("\nAluno Encontrado!");
+                printf("\nId do Aluno: %d\n", vetor_alunos[i].id);
+                printf("Nome do Aluno: %s", vetor_alunos[i].nome);
+                printf("Data de Nascimento: %02d/%02d/%04d\n", vetor_alunos[i].nascimento.dia, vetor_alunos[i].nascimento.mes, vetor_alunos[i].nascimento.ano);
+                printf("Sexo: %c\n", vetor_alunos[i].sexo);
+                printf("Ano Letivo do Aluno: %d\n\n", vetor_alunos[i].ano_letivo);
+                
+                printf("Quantas Notas Serão Adicionadas ao Aluno: ");
+                scanf("%d", &notas);
+                
+                if(notas > 3 || notas < 1){
+                	printf("Opção Invalida! Tente Novamente");
+                	printf("Maximo de Numero de Notas: 3");
+				}
+            }
+        }
+
+    } else if (escolha_de_busca == 2) {
+
+        printf("\nDigite o Numero de Mátricula do Aluno: ");
+        scanf("%d", &id_aluno);
+
+        for (int i = 0; i < MAX; i++) {
+            if (id_aluno == vetor_alunos[i].id) {
+                printf("\nAluno Encontrado!");
+                printf("\nId do Aluno: %d\n", vetor_alunos[i].id);
+                printf("Nome do Aluno: %s", vetor_alunos[i].nome);
+                printf("Data de Nascimento: %02d/%02d/%04d\n", vetor_alunos[i].nascimento.dia, vetor_alunos[i].nascimento.mes, vetor_alunos[i].nascimento.ano);
+                printf("Sexo: %c\n", vetor_alunos[i].sexo);
+                printf("Ano Letivo do Aluno: %d\n\n", vetor_alunos[i].ano_letivo);
+            }
+        }
+    }
+}
+
+void editar(){
+	
+	
+}
+
+void exibir(){
+	
+	printf("\n\nExibindo Todos os Alunos...\n\n");
+	
+	if(alunos == 0){
+		printf("Nenhum Aluno Cadastrado.\n\n");
+	}
+	
+	else{
+	    
+		for(int i = 0; i < alunos; i++){
+		    printf("Matricula | Aluno\n");
+			printf("%-10d | %+10s\n", vetor_alunos[i].id, vetor_alunos[i].nome);
+		}		
+	}
+}
